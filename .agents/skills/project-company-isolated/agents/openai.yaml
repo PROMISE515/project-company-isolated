@@ -1,0 +1,6 @@
+interface:
+  display_name: "Isolated Project Company"
+  short_description: "Run one CEO-led functional company per project."
+  default_prompt: "Use $project-company-isolated to launch a dedicated CEO and functional teams for this project."
+policy:
+  allow_implicit_invocation: false
