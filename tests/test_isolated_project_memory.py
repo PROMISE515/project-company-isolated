@@ -1,4 +1,4 @@
-"""End-to-end coverage for isolated project memory lifecycle."""
+"""End-to-end coverage for isolated persistent project memory."""
 
 import json
 import subprocess
@@ -33,54 +33,25 @@ class IsolatedProjectMemoryTests(unittest.TestCase):
         self.assertEqual(result.returncode, expected_returncode, result.stderr)
         return result
 
-    def test_create_status_extend_and_archive(self):
-        created = json.loads(
-            self.run_tool(
-                "init",
-                "--memory-root",
-                str(self.memory_root),
-                "--project-id",
-                "billing-redesign",
-                "--project-root",
-                str(self.project_root),
-                "--retention-days",
-                "30",
-            ).stdout
-        )
+    def test_create_status_and_complete_without_moving_memory(self):
+        created = json.loads(self.run_tool(
+            "init", "--memory-root", str(self.memory_root), "--project-id", "billing-redesign",
+            "--project-root", str(self.project_root),
+        ).stdout)
         self.assertEqual(created["ceo"]["instance_id"], "sol_project_ceo:billing-redesign")
+        self.assertNotIn("archive_due_at", created)
         self.assertEqual([team["function"] for team in created["functional_teams"]], ["discovery", "delivery", "assurance"])
 
         status = json.loads(self.run_tool("status", "--memory-root", str(self.memory_root)).stdout)
-        self.assertEqual(status["active_projects"][0]["project_id"], "billing-redesign")
+        self.assertEqual(status["projects"][0]["state"], "active")
 
-        self.run_tool(
-            "extend",
-            "--memory-root",
-            str(self.memory_root),
-            "--project-id",
-            "billing-redesign",
-            "--days",
-            "7",
-        )
-        self.run_tool(
-            "archive",
-            "--memory-root",
-            str(self.memory_root),
-            "--project-id",
-            "billing-redesign",
-            expected_returncode=2,
-        )
-        archived = json.loads(
-            self.run_tool(
-                "archive",
-                "--memory-root",
-                str(self.memory_root),
-                "--project-id",
-                "billing-redesign",
-                "--confirm",
-            ).stdout
-        )
-        self.assertTrue(Path(archived["archive_path"]).joinpath("PROJECT_MEMORY.md").is_file())
+        completed = json.loads(self.run_tool(
+            "complete", "--memory-root", str(self.memory_root), "--project-id", "billing-redesign"
+        ).stdout)
+        self.assertTrue(completed["memory_retained"])
+        self.assertTrue(Path(completed["working_memory"]).is_file())
+        status = json.loads(self.run_tool("status", "--memory-root", str(self.memory_root)).stdout)
+        self.assertEqual(status["projects"][0]["state"], "completed")
 
 
 if __name__ == "__main__":

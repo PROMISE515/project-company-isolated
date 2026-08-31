@@ -1,6 +1,6 @@
 # Isolated Project Company
 
-A Codex adapter for treating each substantial project as its own agent company: one dedicated Sol CEO instance, one durable project memory, and functional Terra-Luna teams for discovery, delivery, and assurance.
+A Codex adapter for treating each substantial project as its own agent company: one dedicated Sol CEO instance, one permanent project memory, and functional Terra-Luna teams for discovery, delivery, and assurance.
 
 This is intentionally separate from portfolio-style `project-company`. It does not share a CEO or primary memory across projects.
 
@@ -17,7 +17,7 @@ ln -s "$PWD/.agents/skills/project-company-isolated" "$HOME/.agents/skills/proje
 Restart Codex if necessary, then invoke:
 
 ```text
-Use $project-company-isolated to start `project-id` in /path/to/project-root with a 30-day retention window.
+Use $project-company-isolated to start `project-id` in /path/to/project-root with permanent project memory.
 ```
 
 ## Functional structure
@@ -29,7 +29,7 @@ Dedicated project CEO (Sol)
 └── Assurance: Terra + Luna verification
 ```
 
-The CEO activates only the functions needed by the project and remains accountable for project-level decisions and primary memory.
+The CEO activates only the functions needed by the project and remains accountable for project-level decisions and primary memory. Project memory is never automatically scheduled, archived, moved, or deleted. Explicit completion records the state only, keeping the files available for a later resumption.
 
 ## License
 
